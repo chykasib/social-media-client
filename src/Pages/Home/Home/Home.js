@@ -1,9 +1,9 @@
 import React from 'react';
-
+import Form from '../Form/Form';
 const Home = () => {
     return (
-        <div>
-            <h1>Home</h1>
+        <div className='my-10'>
+            <Form></Form>
         </div>
     );
 };
