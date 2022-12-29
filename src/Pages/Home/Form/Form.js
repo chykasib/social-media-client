@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
+import PrimaryAnimateButton from '../../../components/PrimaryAnimateButton';
 
 function Form() {
     const [text, setText] = useState('');
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [error, setError] = useState(null);
-    const [submitting, setSubmitting] = useState(false);
 
     const handleTextChange = (event) => {
         setText(event.target.value);
@@ -27,12 +27,12 @@ function Form() {
             return;
         }
         setError(null);
-        setSubmitting(true);
 
         // Prepare form data for submission
-        const formData = new FormData();
-        formData.append('text', text);
-        formData.append('image', image);
+        const formData = {
+            text: text,
+            image: image
+        }
 
         try {
             // Send POST request to server with form data
@@ -50,7 +50,7 @@ function Form() {
             window.location.href = '/media';
         } catch (error) {
             setError(error.message);
-            setSubmitting(false);
+
         }
     }
 
@@ -77,7 +77,7 @@ function Form() {
                     Text
                 </label>
                 <textarea
-                    className="w-full rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue"
+                    className="w-full rounded-md p-5 shadow-sm focus:outline-none focus:shadow-outline-blue"
                     id="text"
                     value={text}
                     onChange={handleTextChange}
@@ -92,7 +92,7 @@ function Form() {
                     Image
                 </label>
                 <input
-                    className="w-full rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue"
+                    className="w-full pl-5 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue"
                     type="file"
                     id="image"
                     accept="image/*"
@@ -106,14 +106,10 @@ function Form() {
                     />
                 )}
             </div>
-            <div className="py-4 px-6">
-                <button
-                    type="submit"
-                    className="w-full rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue"
-                    disabled={submitting}
-                >
-                    {submitting ? 'Submitting...' : 'Submit'}
-                </button>
+            <div className="p-6">
+                <PrimaryAnimateButton>
+                    Submit
+                </PrimaryAnimateButton>
             </div>
         </form>
     );
