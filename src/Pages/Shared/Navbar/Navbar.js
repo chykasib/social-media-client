@@ -1,23 +1,34 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { AuthContext } from '../../../Context/AuthProvider';
 
 function Navbar() {
+    const { user, logOut, loading } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
+    const [theme, setTheme] = useState('bg-white');
+    const toggleTheme = () => {
+        theme === 'bg-white' ?
+            setTheme('bg-black') : setTheme('bg-white');
 
-    function toggleMenu() {
-        setIsOpen(!isOpen);
-        document.body.className.toggle('bg-gray-800');
-        document.body.className.toggle('text-white');
+    };
+    useEffect(() => {
+        document.body.className = theme;
+    }, [theme]);
+    const logoutHandler = () => {
+        logOut()
+            .then(result => {
+
+            })
+            .catch(error => console.error(error))
     }
-
     return (
         <nav className="flex items-center justify-between flex-wrap bg-gray-800 p-6">
             <div className="flex items-center flex-shrink-0 text-white mr-6">
                 <span className="font-semibold text-xl tracking-tight">GatherUp</span>
             </div>
             <div className="block lg:hidden">
-                <button onClick={toggleMenu} className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
+                <button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
                     {isOpen ? (
                         <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Close</title><path d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z" /></svg>
                     ) : (
@@ -44,13 +55,19 @@ function Navbar() {
                         About
                     </Link>
                 </div>
+                {
+                    user?.email ? <div>
+                        <button onClick={logoutHandler} className="inline-block text-sm px-4 py-2 mr-9 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
+                            <Link to={'/signup'}>Sing Up</Link>
+                        </button>
+                    </div> : <div>
+                        <button className="inline-block text-sm px-4 py-2 mr-9 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
+                            <Link to={'/login'}>Login</Link>
+                        </button>
+                    </div>
+                }
                 <div>
-                    <button className="inline-block text-sm px-4 py-2 mr-5 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
-                        <Link to={'/login'}>Login</Link>
-                    </button>
-                </div>
-                <div>
-                    <button onClick={toggleMenu} className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
+                    <button onClick={toggleTheme} className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">
                         Toggle
                     </button>
                 </div>

@@ -1,27 +1,49 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaGoogle } from 'react-icons/fa';
+import React, { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaGoogle } from 'react-icons/fa'
+import { AuthContext } from '../../../Context/AuthProvider';
+import { useTitle } from '../../../Hooks/Usetitle';
+import { toast } from 'react-hot-toast';
 const LogIn = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { loginByEmailPassword, googleSignIn } = useContext(AuthContext);
     const [error, setError] = useState(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from?.pathname || '/';
+    useTitle('login')
+    const handleEmailSignIn = e => {
+        e.preventDefault();
+        const form = e.target;
+        const email = form.email.value;
+        const password = form.password.value;
+        loginByEmailPassword(email, password)
+            .then(result => {
+                const user = result.user;
+                console.log(user)
+                if (user?.uid) {
+                    toast('successfully login')
+                    form.reset('');
+                }
+                navigate(from, { replace: true })
+            })
+            .catch((error) => setError(error.message));
+    };
 
-    const handleEmailSignIn = (event) => {
-        event.preventDefault();
-        //   .then(() => )
-        //   .catch((error) => setError(error.message));
-    };
     const handleGoogleSignIn = () => {
-        //   .then(() => )
-        //   .catch((error) => setError(error.message));
-    };
+        googleSignIn()
+            .then(result => {
+                const user = result.user;
+                console.log(user);
+                if (user?.uid) {
+                    toast('successfully login')
+                }
+            })
+            .catch(error => console.error(error))
+    }
     return (
         <form onSubmit={handleEmailSignIn} className="relative pt-10 mt-10 pb-8 px-8 mx-auto max-w-lg shadow-xl">
-            <label className="block text-gray-700 text-3xl font-bold mb-8">
-                Login
-            </label>
             <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" for="username">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                     Username
                 </label>
                 <input
@@ -29,13 +51,12 @@ const LogIn = () => {
                     id="email"
                     type="email"
                     placeholder="Email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
+                    name='email'
                     required
                 />
             </div>
             <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2" for="password">
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                     Password
                 </label>
                 <input
@@ -43,8 +64,7 @@ const LogIn = () => {
                     id="password"
                     type="password"
                     placeholder="Password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    name='password'
                     required
                 />
             </div>
@@ -54,7 +74,7 @@ const LogIn = () => {
             <div className="flex items-center justify-between">
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
-                    type="button"
+                    type='submit'
                 >
                     Sign In
                 </button>
@@ -65,15 +85,14 @@ const LogIn = () => {
                     Forgot Password?
                 </Link>
             </div>
-            <div className="my-4 flex items-center justify-center">
-                <button
-                    onClick={handleGoogleSignIn}
-                    className="flex items-center bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-                >
-                    <FaGoogle className="w-6 h-6 mr-2" />
+
+            <div className="w-full max-w-md">
+                <button className="inline-flex items-center justify-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue" onClick={handleGoogleSignIn}>
+                    <FaGoogle className="fill-current h-4 w-4 mr-2" />
                     Sign in with Google
                 </button>
             </div>
+            <p className='text-center my-4'>New to Gather Up? <Link className='text-success font-bold' to={'/signup'}>Create new account</Link></p>
         </form>
     );
 };

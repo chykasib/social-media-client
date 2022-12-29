@@ -1,53 +1,37 @@
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { CSSTransition } from 'react-transition-group';
-import PrimaryAnimateButton from '../../../components/PrimaryAnimateButton';
 
 function Form() {
-    const [text, setText] = useState('');
-    const [image, setImage] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(null);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState(null)
 
-    const handleTextChange = (event) => {
-        setText(event.target.value);
-    }
-
-    const handleImageChange = (event) => {
-        setImage(event.target.files[0]);
-        setPreviewUrl(URL.createObjectURL(event.target.files[0]));
-    }
-
-    const handleSubmit = async () => {
-        if (!text) {
-            setError('Please enter some text');
-            return;
-        }
-        if (!image) {
-            setError('Please select an image');
-            return;
-        }
+    const handleSubmit = e => {
+        e.preventDefault();
+        const form = e.target;
+        const text = form.text.value;
+        const photo = form.photo.value;
         setError(null);
 
         // Prepare form data for submission
         const formData = {
             text: text,
-            image: image
+            image: photo
         }
-
+        console.log(formData);
         try {
-            // Send POST request to server with form data
-            const response = await fetch('/api/media', {
+            fetch(`http://localhost:5000/PostData`, {
                 method: 'POST',
-                body: formData,
-            });
-
-            // Check if the request was successful
-            if (!response.ok) {
-                throw new Error(response.statusText);
-            }
-
-            // Redirect to media page
-            window.location.href = '/media';
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.acknowledged) {
+                        toast('successfully post added');
+                        form.reset('');
+                        console.log(data)
+                    }
+                })
         } catch (error) {
             setError(error.message);
 
@@ -56,6 +40,7 @@ function Form() {
 
     return (
         <form
+
             onSubmit={handleSubmit}
             className="max-w-sm rounded overflow-hidden shadow-lg mx-auto mt-16"
         >
@@ -79,8 +64,7 @@ function Form() {
                 <textarea
                     className="w-full rounded-md p-5 shadow-sm focus:outline-none focus:shadow-outline-blue"
                     id="text"
-                    value={text}
-                    onChange={handleTextChange}
+                    name='text'
                     placeholder="Enter some text..."
                 />
             </div>
@@ -91,25 +75,16 @@ function Form() {
                 >
                     Image
                 </label>
-                <input
-                    className="w-full pl-5 rounded-md shadow-sm focus:outline-none focus:shadow-outline-blue"
-                    type="file"
-                    id="image"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                />
-                {previewUrl && (
-                    <img
-                        src={previewUrl}
-                        alt="Preview"
-                        className="w-full mt-4 rounded-md shadow-md"
-                    />
-                )}
+                <input type="photo" name='photo' placeholder='image url' className="input input-bordered " />
+                {error && <div className="text-red-500">{error}</div>}
             </div>
-            <div className="p-6">
-                <PrimaryAnimateButton>
+            <div className="py-6 px-6">
+                <button
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline-blue transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+                    type='submit'
+                >
                     Submit
-                </PrimaryAnimateButton>
+                </button>
             </div>
         </form>
     );
