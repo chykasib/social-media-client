@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { FaHeart, FaComment } from 'react-icons/fa'
 import { useSpring, animated } from 'react-spring'
-import { AuthContext } from '../../Context/AuthProvider'
-import Loading from '../Shared/Loading/Loading'
+import { AuthContext } from '../../Context/AuthProvider';
+import Loading from '../Shared/Loading/Loading';
 
-const Media = () => {
+const PostCard = () => {
     const { loading } = useContext(AuthContext);
     const [posts, setPosts] = useState([])
     const [showCards, setShowCards] = useState(false)
@@ -65,35 +65,39 @@ const Media = () => {
         return <Loading></Loading>
     }
     return (
-        <div className="sm:flex md:flex-wrap lg:justify-evenly my-8">
-            {posts?.map(post => (
-                <animated.div key={post._id} style={cardSpring}>
-                    <div className="md:w-full lg:w-full px-4 py-4 rounded-lg shadow-lg bg-white justify-center mt-40">
-                        <img src={post.image} alt='' className="w-full mb-4" />
-                        <h2 className="text-lg font-bold mb-4 text-gray-700">{post.text}</h2>
-                        <div className="flex items-center mb-4">
-                            <FaHeart onClick={() => handleLike(post._id)} className="mr-4 text-red-500 cursor-pointer" />
-                            <span className="mr-4 text-gray-700">{post.likes} likes</span>
-                            <FaComment onClick={() => handleComment(post._id)} className="text-gray-700 cursor-pointer" />
-                        </div>
-                        {post?.comments?.map(comment => (
-                            <div key={comment._id} className="mb-2 text-gray-700">
-                                {comment.text}
+        <div className="my-20">
+            <h1 className='text-5xl font-bold text-success text-center my-20'>Show Posts Area</h1>
+            <div className="sm:flex md:flex-wrap lg:justify-evenly my-30">
+                {posts?.map(post => (
+                    <animated.div key={post._id} style={cardSpring}>
+                        <div className="md:w-full lg:w-full px-4 py-4 rounded-lg shadow-lg bg-white justify-center mt-40">
+                            <img src={post.image} alt='' className="w-full mb-4" />
+                            <h2 className="text-lg font-bold mb-4 text-gray-700">{post.text}</h2>
+                            <div className="flex items-center mb-4">
+                                <FaHeart onClick={() => handleLike(post._id)} className="mr-4 text-red-500 cursor-pointer" />
+                                <span className="mr-4 text-gray-700">{post.likes} likes</span>
+                                <FaComment onClick={() => handleComment(post._id)} className="text-gray-700 cursor-pointer" />
                             </div>
-                        ))}
-                        <form onSubmit={() => handleCommentSubmit(post._id)}>
-                            <input
-                                type="text"
-                                id={`comment-${post._id}`}
-                                className="w-full px-2 py-1 rounded-full outline-none focus:shadow-outline"
-                                placeholder="Add a comment"
-                            />
-                        </form>
-                    </div>
-                </animated.div>
-            ))}
+                            {post?.comments?.map(comment => (
+                                <div key={comment._id} className="mb-2 text-gray-700">
+                                    {comment.text}
+                                </div>
+                            ))}
+                            <form onSubmit={() => handleCommentSubmit(post._id)}>
+                                <input
+                                    type="text"
+                                    id={`comment-${post._id}`}
+                                    className="w-full px-2 py-1 rounded-full outline-none focus:shadow-outline"
+                                    placeholder="Add a comment"
+                                />
+                            </form>
+                        </div>
+                    </animated.div>
+                ))}
+            </div>
+
         </div>
     )
 }
 
-export default Media;
+export default PostCard;

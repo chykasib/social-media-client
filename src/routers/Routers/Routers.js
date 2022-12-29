@@ -8,6 +8,7 @@ import Media from "../../Pages/Media/Media";
 import Message from "../../Pages/Message/Message";
 import LogIn from "../../Pages/Shared/LogIn/LogIn";
 import SignUp from "../../Pages/Shared/SignUp/SignUp";
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
 
 export const router = createBrowserRouter([
     {
@@ -16,7 +17,7 @@ export const router = createBrowserRouter([
                 path: '/', element: <Home></Home>
             },
             {
-                path: '/', element: <Form></Form>
+                path: '/', element: <PrivateRoute><Form></Form></PrivateRoute>
             },
             {
                 path: '/', element: <PostInformations></PostInformations>

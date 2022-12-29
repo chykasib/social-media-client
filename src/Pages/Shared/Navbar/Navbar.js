@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../../Context/AuthProvider';
 
 function Navbar() {
-    const { user, logOut, loading } = useContext(AuthContext);
+    const { user, logOut } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
     const [theme, setTheme] = useState('bg-white');
